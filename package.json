@@ -1,0 +1,15 @@
+{
+  "name": "android-convex-workout",
+  "version": "1.0.0",
+  "description": "Sample Android Convex app using Jetpack Compose",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "convex": "^1.14.4"
+  }
+}
