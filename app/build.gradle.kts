@@ -1,7 +1,15 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "1.9.0"
 }
+
+val workoutPropertiesFile = rootProject.file("workout.properties")
+val workoutProperties = Properties()
+workoutProperties.load(FileInputStream(workoutPropertiesFile))
 
 android {
     namespace = "dev.convex.workouttracker"
@@ -9,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.convex.workouttracker"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -27,6 +35,23 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "convex_url", workoutProperties.getProperty("convex.prod_url"))
+            resValue("string", "com_auth0_scheme", workoutProperties.getProperty("auth0.scheme"))
+            resValue("string", "com_auth0_client_id", workoutProperties.getProperty("auth0.prod_client_id"))
+            resValue("string", "com_auth0_domain", workoutProperties.getProperty("auth0.prod_domain"))
+
+            manifestPlaceholders["auth0Domain"] = workoutProperties.getProperty("auth0.prod_domain")
+            manifestPlaceholders["auth0Scheme"] = workoutProperties.getProperty("auth0.scheme")
+        }
+
+        debug {
+            resValue("string", "convex_url", workoutProperties.getProperty("convex.dev_url"))
+            resValue("string", "com_auth0_scheme", workoutProperties.getProperty("auth0.scheme"))
+            resValue("string", "com_auth0_client_id", workoutProperties.getProperty("auth0.dev_client_id"))
+            resValue("string", "com_auth0_domain", workoutProperties.getProperty("auth0.dev_domain"))
+
+            manifestPlaceholders["auth0Domain"] = workoutProperties.getProperty("auth0.dev_domain")
+            manifestPlaceholders["auth0Scheme"] = workoutProperties.getProperty("auth0.scheme")
         }
     }
     compileOptions {
@@ -50,7 +75,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -67,4 +91,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("dev.convex:android-convexmobile:0.2.0@aar") {
+        isTransitive = true
+    }
+    implementation("dev.convex:android-convex-auth0:0.1.0")
+    implementation("com.auth0.android:auth0:2.9.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }

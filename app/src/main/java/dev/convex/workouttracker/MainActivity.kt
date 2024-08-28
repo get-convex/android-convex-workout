@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +23,7 @@ import dev.convex.workouttracker.ui.OverviewScreen
 import dev.convex.workouttracker.ui.SignInScreen
 import dev.convex.workouttracker.ui.WorkoutEditorScreen
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WorkoutTrackerTheme {
                 val navController = rememberNavController()
+                val coroutineScope = rememberCoroutineScope()
 
                 val currentBackStack by navController.currentBackStackEntryAsState()
                 val currentDestination = currentBackStack?.destination
@@ -60,7 +63,12 @@ class MainActivity : ComponentActivity() {
                         composable(route = SignIn.route) {
                             SignInScreen(
                                 onClickSignIn = {
-                                    navController.navigate(Overview.route)
+                                    coroutineScope.launch {
+                                        (application as WorkoutApplication).convexClient.login(this@MainActivity)
+                                            .onSuccess {
+                                                navController.navigate(Overview.route)
+                                            }
+                                    }
                                 }
                             )
                         }
