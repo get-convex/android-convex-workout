@@ -15,7 +15,8 @@ app://{yourAuth0Domain}/android/dev.convex.workouttracker/callback
 
 ## Configuration
 
-You'll need to create a `workout.properties` file that looks like the following:
+You'll need to create a `workout.properties` file in the root of the repository/project that
+contains something like the following:
 
 ```
 # IMPORTANT - do not quote any of the following values!
