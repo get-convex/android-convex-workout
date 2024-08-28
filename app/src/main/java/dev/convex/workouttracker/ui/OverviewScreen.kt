@@ -17,6 +17,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.convex.workouttracker.models.Workout
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -38,8 +41,17 @@ import java.util.Locale
 
 @Composable
 fun OverviewScreen(
-    onClickAddWorkout: () -> Unit = {}
+    onClickAddWorkout: () -> Unit = {},
+    onWeekSelected: (startOfWeek: LocalDate) -> Unit = {},
+    workoutData: Map<LocalDate, Workout> = mapOf()
 ) {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    var selectedStartOfWeek by remember {
+        mutableStateOf(today.minus(DatePeriod(days = today.dayOfWeek.ordinal)))
+    }
+    LaunchedEffect("creation") {
+        onWeekSelected(selectedStartOfWeek)
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -48,7 +60,10 @@ fun OverviewScreen(
             text = "Workout Tracker",
             style = MaterialTheme.typography.headlineLarge
         )
-        Week()
+        Week(onWeekSelected = { week ->
+            selectedStartOfWeek = week
+            onWeekSelected(week)
+        }, selectedWeek = selectedStartOfWeek, workoutData = workoutData)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,34 +81,55 @@ fun OverviewScreen(
 @Composable
 fun OverviewScreenPreview() {
     WorkoutTrackerTheme {
-        OverviewScreen()
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        OverviewScreen(
+            workoutData = mapOf(
+                today.minus(DatePeriod(days = 5)) to Workout(
+                    "junk data",
+                    Workout.Activity.Running
+                ),
+                today to Workout(
+                    "junk data",
+                    Workout.Activity.Swimming
+                )
+            )
+        )
     }
 }
 
 private val DAY_SIZE = 24.dp
 
 @Composable
-fun Week() {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    var selectedStartOfWeek by remember {
-        mutableStateOf(today.minus(DatePeriod(days = today.dayOfWeek.ordinal)))
-    }
+fun Week(
+    onWeekSelected: (startOfWeek: LocalDate) -> Unit = {},
+    selectedWeek: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    workoutData: Map<LocalDate, Workout> = mapOf()
+) {
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { selectedStartOfWeek = selectedStartOfWeek.minus(DatePeriod(days = 7)) }) {
+            IconButton(onClick = {
+                onWeekSelected(selectedWeek.minus(DatePeriod(days = 7)))
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                     contentDescription = ""
                 )
             }
             Text(
-                text = "Week of ${selectedStartOfWeek.month.getDisplayName(TextStyle.SHORT, Locale.getDefault())} ${selectedStartOfWeek.dayOfMonth}",
+                text = "Week of ${
+                    selectedWeek.month.getDisplayName(
+                        TextStyle.SHORT,
+                        Locale.getDefault()
+                    )
+                } ${selectedWeek.dayOfMonth}",
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = { selectedStartOfWeek = selectedStartOfWeek.plus(DatePeriod(days = 7)) }) {
+            IconButton(onClick = {
+                onWeekSelected(selectedWeek.plus(DatePeriod(days = 7)))
+            }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                     contentDescription = ""
@@ -120,13 +156,9 @@ fun Week() {
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
         ) {
-            Dot()
-            Dot(true)
-            Dot()
-            Dot()
-            Dot()
-            Dot()
-            Dot()
+            for (offset in 0..6) {
+                Dot(workoutData.containsKey(selectedWeek.plus(DatePeriod(days = offset))))
+            }
         }
     }
 }

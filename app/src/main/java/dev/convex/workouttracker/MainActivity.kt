@@ -14,19 +14,24 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.convex.android.AuthState
+import dev.convex.workouttracker.models.Workout
 import dev.convex.workouttracker.ui.OverviewScreen
 import dev.convex.workouttracker.ui.SignInScreen
 import dev.convex.workouttracker.ui.LoadingScreen
 import dev.convex.workouttracker.ui.WorkoutEditorScreen
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -82,7 +87,10 @@ class MainActivity : ComponentActivity() {
                             OverviewScreen(
                                 onClickAddWorkout = {
                                     navController.navigate(WorkoutEditor.route)
-                                }
+                                },
+                                onWeekSelected = {
+                                    // TODO fetch/subscribe to workout data using the given week
+                                },
                             )
                         }
                         composable(route = WorkoutEditor.route) {
