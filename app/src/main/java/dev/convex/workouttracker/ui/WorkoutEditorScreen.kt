@@ -3,6 +3,7 @@ package dev.convex.workouttracker.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -34,9 +35,10 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun WorkoutEditor() {
+fun WorkoutEditorScreen() {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
         DatePickerDocked()
     }
@@ -46,7 +48,7 @@ fun WorkoutEditor() {
 @Composable
 fun WorkoutEditorPreview() {
     WorkoutTrackerTheme {
-        WorkoutEditor()
+        WorkoutEditorScreen()
     }
 }
 

@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
-fun OverviewScreen() {
+fun OverviewScreen(
+    onClickAddWorkout: () -> Unit = {}
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -40,7 +42,7 @@ fun OverviewScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxSize()
         ) {
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = onClickAddWorkout) {
                 Text("Add Workout")
             }
         }

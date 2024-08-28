@@ -15,6 +15,7 @@ import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
 fun SignInScreen(
+    onClickSignIn: () -> Unit = {}
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -27,7 +28,7 @@ fun SignInScreen(
             style = MaterialTheme.typography.displayMedium,
         )
         // TODO: Kick off auth flow
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = onClickSignIn) {
             Text(text = "Sign In")
         }
     }
