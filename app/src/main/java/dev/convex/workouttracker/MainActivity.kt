@@ -86,7 +86,14 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = WorkoutEditor.route) {
-                            WorkoutEditorScreen()
+                            WorkoutEditorScreen(onSave = { workout ->
+                                coroutineScope.launch {
+                                    client.mutation<String?>(
+                                        "workouts:create",
+                                        workout.toArgs()
+                                    )
+                                }
+                            })
                         }
                         composable(route = Loading.route) {
                             LoadingScreen()
