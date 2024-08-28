@@ -12,6 +12,11 @@ object SignIn : WorkoutTrackerDestination {
     override val title = "Welcome"
 }
 
+object Loading : WorkoutTrackerDestination {
+    override val route = "loading"
+    override val title = "Loading"
+}
+
 object Overview : WorkoutTrackerDestination {
     override val route = "overview"
     override val title = "Workout Tracker"

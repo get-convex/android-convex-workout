@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -19,8 +20,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.convex.android.AuthState
 import dev.convex.workouttracker.ui.OverviewScreen
 import dev.convex.workouttracker.ui.SignInScreen
+import dev.convex.workouttracker.ui.LoadingScreen
 import dev.convex.workouttracker.ui.WorkoutEditorScreen
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
@@ -55,19 +58,22 @@ class MainActivity : ComponentActivity() {
                     },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
+                    val client = (application as WorkoutApplication).convexClient
+                    val authState by client.authState.collectAsState()
                     NavHost(
                         navController = navController,
-                        startDestination = SignIn.route,
+                        startDestination = when (authState) {
+                            is AuthState.AuthLoading -> Loading.route
+                            is AuthState.Authenticated -> Overview.route
+                            is AuthState.Unauthenticated -> SignIn.route
+                        },
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(route = SignIn.route) {
                             SignInScreen(
                                 onClickSignIn = {
                                     coroutineScope.launch {
-                                        (application as WorkoutApplication).convexClient.login(this@MainActivity)
-                                            .onSuccess {
-                                                navController.navigate(Overview.route)
-                                            }
+                                        client.login(this@MainActivity)
                                     }
                                 }
                             )
@@ -81,6 +87,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = WorkoutEditor.route) {
                             WorkoutEditorScreen()
+                        }
+                        composable(route = Loading.route) {
+                            LoadingScreen()
                         }
                     }
                 }
