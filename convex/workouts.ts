@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const create = mutation({
@@ -26,3 +26,19 @@ export const create = mutation({
     return newWorkoutId;
   },
 });
+
+export const get = query({
+    args: {},
+    handler: async (ctx, _) => {
+        const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Unauthenticated call to create");
+    }
+      const workouts = await ctx.db
+        .query("workouts")
+        .filter((q) => q.eq(q.field("user"), identity.email))
+        .order("desc")
+        .take(100);
+      return workouts;
+    },
+  });

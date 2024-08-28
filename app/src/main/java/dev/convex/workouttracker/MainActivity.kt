@@ -1,6 +1,7 @@
 package dev.convex.workouttracker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,13 +86,25 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = Overview.route) {
+                            var workoutData: Map<LocalDate, Workout> by remember {
+                                mutableStateOf(
+                                    mapOf()
+                                )
+                            }
+                            LaunchedEffect("overviewLaunch") {
+                                client.subscribe<List<Workout>>("workouts:get").collect { result ->
+                                    result.onSuccess { workouts ->
+                                        workoutData = workouts.associateBy({
+                                            LocalDate.parse(it.date)
+                                        }, { it })
+                                    }
+                                }
+                            }
                             OverviewScreen(
                                 onClickAddWorkout = {
                                     navController.navigate(WorkoutEditor.route)
                                 },
-                                onWeekSelected = {
-                                    // TODO fetch/subscribe to workout data using the given week
-                                },
+                                workoutData = workoutData
                             )
                         }
                         composable(route = WorkoutEditor.route) {

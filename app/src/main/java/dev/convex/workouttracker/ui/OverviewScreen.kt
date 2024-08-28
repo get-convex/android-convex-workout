@@ -42,15 +42,11 @@ import java.util.Locale
 @Composable
 fun OverviewScreen(
     onClickAddWorkout: () -> Unit = {},
-    onWeekSelected: (startOfWeek: LocalDate) -> Unit = {},
     workoutData: Map<LocalDate, Workout> = mapOf()
 ) {
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     var selectedStartOfWeek by remember {
         mutableStateOf(today.minus(DatePeriod(days = today.dayOfWeek.ordinal)))
-    }
-    LaunchedEffect("creation") {
-        onWeekSelected(selectedStartOfWeek)
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,7 +58,6 @@ fun OverviewScreen(
         )
         Week(onWeekSelected = { week ->
             selectedStartOfWeek = week
-            onWeekSelected(week)
         }, selectedWeek = selectedStartOfWeek, workoutData = workoutData)
         Column(
             verticalArrangement = Arrangement.Center,
