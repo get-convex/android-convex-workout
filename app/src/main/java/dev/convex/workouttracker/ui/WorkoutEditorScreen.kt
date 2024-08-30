@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import dev.convex.workouttracker.models.Workout
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun WorkoutEditorScreen(viewModel: WorkoutEditorViewModel) {
@@ -187,7 +187,6 @@ fun DatePickerDocked(datePickerState: DatePickerState = rememberDatePickerState(
     }
 }
 
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    return formatter.format(Date(millis))
-}
+private fun convertMillisToDate(millis: Long): String =
+    Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.UTC).date.toString()
+
