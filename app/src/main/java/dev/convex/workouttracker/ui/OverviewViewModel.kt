@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.convex.workouttracker.WorkoutApplication
 import dev.convex.workouttracker.core.WorkoutRepository
 import kotlinx.coroutines.flow.Flow
+import dev.convex.workouttracker.models.Workout
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -45,9 +46,8 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
     }
 
     /**
-     * A state flow containing a map of dates to a workout for that date (if any).
+     * A state flow containing a map of dates to workouts for that date (if any).
      */
-    // TODO update to support multiple workouts for a date.
     val workouts = flow {
         emitAll(repository.subscribeToWorkouts())
     }.transform { result ->
@@ -55,12 +55,12 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
             emit(value)
         }
     }
-        .transform { workouts ->
-            emit(workouts.associateBy({
-                LocalDate.parse(it.date)
-            }, { workout ->
-                workout
-            }))
+        .transform<List<Workout>, Map<LocalDate, List<Workout>>> { workouts ->
+            val workoutMap = mutableMapOf<LocalDate, MutableList<Workout>>()
+            workouts.forEach {
+                workoutMap.getOrPut(LocalDate.parse(it.date)) { mutableListOf() }.add(it)
+            }
+            emit(workoutMap)
         }
         .viewModelScopedStateIn(mapOf())
 

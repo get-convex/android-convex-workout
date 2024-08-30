@@ -21,14 +21,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.convex.workouttracker.models.Workout
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.datetime.Clock
@@ -60,7 +58,7 @@ fun OverviewContent(
     onClickAddWorkout: () -> Unit = {},
     selectedWeek: LocalDate = OverviewViewModel.defaultStartDate,
     onWeekSelected: (startDate: LocalDate) -> Unit = {},
-    workoutData: Map<LocalDate, Workout> = mapOf()
+    workoutData: Map<LocalDate, List<Workout>> = mapOf()
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -99,15 +97,15 @@ fun OverviewContentPreview() {
         OverviewContent(
             selectedWeek = selectedWeek,
             workoutData = mapOf(
-                today.minus(DatePeriod(days = 5)) to Workout(
+                today.minus(DatePeriod(days = 5)) to listOf(Workout(
                     "junk data",
                     Workout.Activity.Running
-                ),
-                today to Workout(
+                )),
+                today to listOf(Workout(
                     "junk data",
                     Workout.Activity.Swimming
                 )
-            ),
+            )),
             onWeekSelected = { selectedWeek = it }
         )
     }
@@ -119,7 +117,7 @@ private val DAY_SIZE = 24.dp
 fun Week(
     onWeekSelected: (startOfWeek: LocalDate) -> Unit = {},
     selectedWeek: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-    workoutData: Map<LocalDate, Workout> = mapOf()
+    workoutData: Map<LocalDate, List<Workout>> = mapOf()
 ) {
     Column {
         Row(
