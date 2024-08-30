@@ -1,17 +1,24 @@
 # android-convex-workout
 Sample Android Convex app using Jetpack Compose
 
+New to Convex? [Take the tour](https://docs.convex.dev/get-started).
+
 ## Getting Started
 
-Run `npx convex dev` and setup a new Convex application (or connect to an existing one for Workout
-Tracker) for the required backend functionality.
-
-Create (or get access to) an Auth0 application configuration for a native Android app. On the Auth0
-Settings page for your application, the callback and logout URLs should be set to:
+1. Run `npx i convex` to install Convex.
+3. Create (or get access to) an
+[Auth0 application configuration](https://auth0.com/docs/libraries/auth0-android)
+for a native Android app. On the Auth0 Settings page for your application, the callback and logout
+URLs should be set to:
 
 ```
 app://{yourAuth0Domain}/android/dev.convex.workouttracker/callback
 ```
+
+4. Run `npx convex dev` and setup a new Convex application (or connect to an existing one for Workout
+Tracker) for the required backend functionality.
+5. [Setup the environment variables](https://docs.convex.dev/dashboard/deployments/deployment-settings#environment-variables)
+   on the Convex backend: `AUTH0_CLIENT_ID` and `AUTH0_DOMAIN`
 
 ## Configuration
 
