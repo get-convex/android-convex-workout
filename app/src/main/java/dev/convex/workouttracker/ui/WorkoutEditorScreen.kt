@@ -1,27 +1,30 @@
 package dev.convex.workouttracker.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,27 +53,28 @@ fun WorkoutEditorScreen(viewModel: WorkoutEditorViewModel) {
 fun WorkoutEditorContent(onSave: (workout: Workout) -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val datePickerState = rememberDatePickerState()
         var selectedActivity by remember { mutableStateOf<Workout.Activity?>(null) }
-        Column {
-            DatePickerDocked(datePickerState = datePickerState)
-            ActivityPicker(selectedActivity = selectedActivity) { activity ->
-                selectedActivity = activity
-            }
-            Button(
-                enabled = selectedActivity != null && datePickerState.selectedDateMillis != null,
-                onClick = {
-                    onSave(
-                        Workout(
-                            date = convertMillisToDate(datePickerState.selectedDateMillis!!),
-                            activity = selectedActivity!!
-                        )
+        DatePickerDocked(datePickerState = datePickerState)
+        ActivityPicker(selectedActivity = selectedActivity) { activity ->
+            selectedActivity = activity
+        }
+        Button(
+            enabled = selectedActivity != null && datePickerState.selectedDateMillis != null,
+            onClick = {
+                onSave(
+                    Workout(
+                        date = convertMillisToDate(datePickerState.selectedDateMillis!!),
+                        activity = selectedActivity!!
                     )
-                }) {
-                Text("Save")
-            }
+                )
+            }) {
+            Text("Save")
         }
     }
 }
@@ -83,18 +87,50 @@ fun WorkoutEditorContentPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityPicker(
-    selectedActivity: Workout.Activity? = null,
+    selectedActivity: Workout.Activity?,
     onActivitySelected: (activity: Workout.Activity) -> Unit = {}
 ) {
-    Column(Modifier.selectableGroup()) {
-        Workout.Activity.options.forEach {
-            Row() {
-                RadioButton(selected = selectedActivity == it, onClick = { onActivitySelected(it) })
-                Text(it.toString())
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        TextField(
+            readOnly = true,
+            value = selectedActivity?.toString() ?: "",
+            onValueChange = { },
+            label = { Text("Activity") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded
+                )
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+        DropdownMenu(
+            modifier = Modifier.exposedDropdownSize(),
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
             }
-
+        ) {
+            Workout.Activity.options.forEach { selectedActivity ->
+                DropdownMenuItem(
+                    text = {
+                        Text(text = selectedActivity.toString())
+                    },
+                    onClick = {
+                        onActivitySelected(selectedActivity)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
