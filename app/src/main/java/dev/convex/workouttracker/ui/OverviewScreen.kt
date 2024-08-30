@@ -97,15 +97,19 @@ fun OverviewContentPreview() {
         OverviewContent(
             selectedWeek = selectedWeek,
             workoutData = mapOf(
-                today.minus(DatePeriod(days = 5)) to listOf(Workout(
-                    "junk data",
-                    Workout.Activity.Running
-                )),
-                today to listOf(Workout(
-                    "junk data",
-                    Workout.Activity.Swimming
+                today.minus(DatePeriod(days = 5)) to listOf(
+                    Workout(
+                        "junk data",
+                        Workout.Activity.Running
+                    )
+                ),
+                today to listOf(
+                    Workout(
+                        "junk data",
+                        Workout.Activity.Swimming
+                    )
                 )
-            )),
+            ),
             onWeekSelected = { selectedWeek = it }
         )
     }
@@ -171,7 +175,7 @@ fun Week(
                 .padding(horizontal = 8.dp)
         ) {
             for (offset in 0..6) {
-                Dot(workoutData.containsKey(selectedWeek.plus(DatePeriod(days = offset))))
+                Dot(filled = workoutData.containsKey(selectedWeek.plus(DatePeriod(days = offset))))
             }
         }
     }
@@ -189,8 +193,8 @@ fun DayHeader(text: String) {
 
 @Composable
 fun Dot(
+    modifier: Modifier = Modifier,
     filled: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     val color = if (filled) {
         MaterialTheme.colorScheme.primary
