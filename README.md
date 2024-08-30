@@ -7,7 +7,7 @@ New to Convex? [Take the tour](https://docs.convex.dev/get-started).
 
 1. Run `npx i convex` to install Convex.
 3. Create (or get access to) an
-[Auth0 application configuration](https://auth0.com/docs/libraries/auth0-android)
+[Auth0 application configuration](https://auth0.com/docs/quickstart/native/android)
 for a native Android app. On the Auth0 Settings page for your application, the callback and logout
 URLs should be set to:
 
