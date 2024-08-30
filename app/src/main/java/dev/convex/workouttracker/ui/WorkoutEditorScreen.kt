@@ -40,9 +40,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@Composable
+fun WorkoutEditorScreen(viewModel: WorkoutEditorViewModel) {
+    WorkoutEditorContent(onSave = viewModel::storeWorkout)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WorkoutEditorScreen(onSave: (workout: Workout) -> Unit = {}) {
+fun WorkoutEditorContent(onSave: (workout: Workout) -> Unit = {}) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -72,9 +77,9 @@ fun WorkoutEditorScreen(onSave: (workout: Workout) -> Unit = {}) {
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
-fun WorkoutEditorPreview() {
+fun WorkoutEditorContentPreview() {
     WorkoutTrackerTheme {
-        WorkoutEditorScreen()
+        WorkoutEditorContent()
     }
 }
 

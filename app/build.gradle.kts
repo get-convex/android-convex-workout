@@ -98,4 +98,5 @@ dependencies {
     implementation("com.auth0.android:auth0:2.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.20")
 }

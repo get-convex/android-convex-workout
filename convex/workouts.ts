@@ -1,7 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-export const create = mutation({
+export const store = mutation({
   args: {
     date: v.string(),
     duration: v.optional(v.int64()),

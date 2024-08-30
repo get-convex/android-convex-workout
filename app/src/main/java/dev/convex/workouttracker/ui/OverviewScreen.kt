@@ -17,16 +17,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.convex.workouttracker.models.Workout
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.datetime.Clock
@@ -41,13 +43,25 @@ import java.util.Locale
 
 @Composable
 fun OverviewScreen(
+    viewModel: OverviewViewModel,
     onClickAddWorkout: () -> Unit = {},
+) {
+    val workouts by viewModel.workouts.collectAsState()
+    OverviewContent(
+        onClickAddWorkout,
+        viewModel.selectedWeek.value,
+        viewModel::selectWeek,
+        workouts
+    )
+}
+
+@Composable
+fun OverviewContent(
+    onClickAddWorkout: () -> Unit = {},
+    selectedWeek: LocalDate = OverviewViewModel.defaultStartDate,
+    onWeekSelected: (startDate: LocalDate) -> Unit = {},
     workoutData: Map<LocalDate, Workout> = mapOf()
 ) {
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    var selectedStartOfWeek by remember {
-        mutableStateOf(today.minus(DatePeriod(days = today.dayOfWeek.ordinal)))
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -56,9 +70,11 @@ fun OverviewScreen(
             text = "Workout Tracker",
             style = MaterialTheme.typography.headlineLarge
         )
-        Week(onWeekSelected = { week ->
-            selectedStartOfWeek = week
-        }, selectedWeek = selectedStartOfWeek, workoutData = workoutData)
+        Week(
+            onWeekSelected = onWeekSelected,
+            selectedWeek = selectedWeek,
+            workoutData = workoutData
+        )
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,10 +90,14 @@ fun OverviewScreen(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 680)
 @Composable
-fun OverviewScreenPreview() {
+fun OverviewContentPreview() {
     WorkoutTrackerTheme {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        OverviewScreen(
+        var selectedWeek by remember {
+            mutableStateOf(OverviewViewModel.defaultStartDate)
+        }
+        OverviewContent(
+            selectedWeek = selectedWeek,
             workoutData = mapOf(
                 today.minus(DatePeriod(days = 5)) to Workout(
                     "junk data",
@@ -87,7 +107,8 @@ fun OverviewScreenPreview() {
                     "junk data",
                     Workout.Activity.Swimming
                 )
-            )
+            ),
+            onWeekSelected = { selectedWeek = it }
         )
     }
 }

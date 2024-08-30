@@ -1,10 +1,10 @@
 package dev.convex.workouttracker
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,27 +13,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.convex.android.AuthState
-import dev.convex.workouttracker.models.Workout
-import dev.convex.workouttracker.ui.OverviewScreen
-import dev.convex.workouttracker.ui.SignInScreen
+import dev.convex.workouttracker.ui.AuthViewModel
 import dev.convex.workouttracker.ui.LoadingScreen
+import dev.convex.workouttracker.ui.OverviewScreen
+import dev.convex.workouttracker.ui.OverviewViewModel
+import dev.convex.workouttracker.ui.SignInScreen
 import dev.convex.workouttracker.ui.WorkoutEditorScreen
+import dev.convex.workouttracker.ui.WorkoutEditorViewModel
 import dev.convex.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -65,8 +62,8 @@ class MainActivity : ComponentActivity() {
                     },
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
-                    val client = (application as WorkoutApplication).convexClient
-                    val authState by client.authState.collectAsState()
+                    val authViewModel: AuthViewModel by viewModels { AuthViewModel.Factory }
+                    val authState by authViewModel.authState.collectAsState()
                     NavHost(
                         navController = navController,
                         startDestination = when (authState) {
@@ -80,42 +77,23 @@ class MainActivity : ComponentActivity() {
                             SignInScreen(
                                 onClickSignIn = {
                                     coroutineScope.launch {
-                                        client.login(this@MainActivity)
+                                        authViewModel.signIn(this@MainActivity)
                                     }
                                 }
                             )
                         }
                         composable(route = Overview.route) {
-                            var workoutData: Map<LocalDate, Workout> by remember {
-                                mutableStateOf(
-                                    mapOf()
-                                )
-                            }
-                            LaunchedEffect("overviewLaunch") {
-                                client.subscribe<List<Workout>>("workouts:get").collect { result ->
-                                    result.onSuccess { workouts ->
-                                        workoutData = workouts.associateBy({
-                                            LocalDate.parse(it.date)
-                                        }, { it })
-                                    }
-                                }
-                            }
+                            val viewModel: OverviewViewModel by viewModels { OverviewViewModel.Factory }
                             OverviewScreen(
                                 onClickAddWorkout = {
                                     navController.navigate(WorkoutEditor.route)
                                 },
-                                workoutData = workoutData
+                                viewModel = viewModel
                             )
                         }
                         composable(route = WorkoutEditor.route) {
-                            WorkoutEditorScreen(onSave = { workout ->
-                                coroutineScope.launch {
-                                    client.mutation<String?>(
-                                        "workouts:create",
-                                        workout.toArgs()
-                                    )
-                                }
-                            })
+                            val viewModel: WorkoutEditorViewModel by viewModels { WorkoutEditorViewModel.Factory }
+                            WorkoutEditorScreen(viewModel)
                         }
                         composable(route = Loading.route) {
                             LoadingScreen()
