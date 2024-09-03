@@ -64,10 +64,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
                     val authViewModel: AuthViewModel by viewModels { AuthViewModel.Factory }
+                    // Force initial AuthLoading state since we attempt auto sign-in and don't want
+                    // the Unauthenticated state to happen first.
+                    val authState by authViewModel.authState.collectAsState(AuthState.AuthLoading())
                     LaunchedEffect("autoSignIn") {
                         authViewModel.signInAutomatically()
                     }
-                    val authState by authViewModel.authState.collectAsState(AuthState.AuthLoading())
                     NavHost(
                         navController = navController,
                         startDestination = when (authState) {

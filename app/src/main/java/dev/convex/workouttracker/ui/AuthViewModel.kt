@@ -9,18 +9,13 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.convex.workouttracker.WorkoutApplication
 import dev.convex.workouttracker.core.WorkoutRepository
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: WorkoutRepository) : ViewModel() {
     /**
      * Holds the current authentication state of the application.
      */
-    // We drop the first value from the flow here b/c it's for the unauthenticated state. The app
-    // triggers an automatic sign in on launch, and this prevents the unauthenticated state from
-    // flashing in on launch.
-    // TODO update the auth integration to allow a custom start state?
-    val authState get() = repository.authState.drop(1)
+    val authState get() = repository.authState
 
     /**
      * Triggers a sign-in flow which will update the [authState].
