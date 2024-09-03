@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
@@ -44,21 +46,19 @@ fun OverviewScreen(
     viewModel: OverviewViewModel,
     onClickAddWorkout: () -> Unit = {},
 ) {
-    val workouts by viewModel.workouts.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     OverviewContent(
         onClickAddWorkout,
-        viewModel.selectedWeek.value,
         viewModel::selectWeek,
-        workouts
+        uiState,
     )
 }
 
 @Composable
 fun OverviewContent(
     onClickAddWorkout: () -> Unit = {},
-    selectedWeek: LocalDate = OverviewViewModel.defaultStartDate,
     onWeekSelected: (startDate: LocalDate) -> Unit = {},
-    workoutData: Map<LocalDate, List<Workout>> = mapOf()
+    uiState: UiState = UiState(),
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,9 +70,10 @@ fun OverviewContent(
         )
         Week(
             onWeekSelected = onWeekSelected,
-            selectedWeek = selectedWeek,
-            workoutData = workoutData
+            selectedWeek = uiState.selectedWeek,
+            workoutData = uiState.allWorkouts
         )
+        WorkoutFeed(workouts = uiState.workoutsForWeek)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -92,25 +93,45 @@ fun OverviewContentPreview() {
     WorkoutTrackerTheme {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         var selectedWeek by remember {
-            mutableStateOf(OverviewViewModel.defaultStartDate)
+            mutableStateOf(UiState.defaultStartDate)
         }
         OverviewContent(
-            selectedWeek = selectedWeek,
-            workoutData = mapOf(
-                today.minus(DatePeriod(days = 5)) to listOf(
-                    Workout(
-                        "junk data",
-                        Workout.Activity.Running
+            onWeekSelected = { selectedWeek = it },
+            uiState = UiState(
+                selectedWeek = selectedWeek,
+                allWorkouts = mapOf(
+                    today.minus(DatePeriod(days = 5)) to listOf(
+                        Workout(
+                            "junk data",
+                            Workout.Activity.Running
+                        )
+                    ),
+                    today to listOf(
+                        Workout(
+                            "junk data",
+                            Workout.Activity.Swimming
+                        )
                     )
                 ),
-                today to listOf(
+                workoutsForWeek = listOf(
                     Workout(
                         "junk data",
                         Workout.Activity.Swimming
-                    )
+                    ),
+                    Workout(
+                        "junk data",
+                        Workout.Activity.Running
+                    ),
+                    Workout(
+                        "junk data",
+                        Workout.Activity.Lifting
+                    ),
+                    Workout(
+                        "junk data",
+                        Workout.Activity.Walking
+                    ),
                 )
-            ),
-            onWeekSelected = { selectedWeek = it }
+            )
         )
     }
 }
@@ -208,5 +229,14 @@ fun Dot(
             drawCircle(color, radius = DAY_SIZE.toPx() / 6)
         }
 
+    }
+}
+
+@Composable
+fun WorkoutFeed(workouts: List<Workout> = listOf()) {
+    LazyColumn {
+        items(workouts) {
+            Text(text = it.activity.toString())
+        }
     }
 }
