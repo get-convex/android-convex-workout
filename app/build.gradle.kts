@@ -92,10 +92,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("dev.convex:android-convexmobile:0.2.0@aar") {
+    implementation("dev.convex:android-convexmobile:0.3.0@aar") {
         isTransitive = true
     }
-    implementation("dev.convex:android-convex-auth0:0.1.0")
+    implementation("dev.convex:android-convex-auth0:0.2.0")
     implementation("com.auth0.android:auth0:2.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")

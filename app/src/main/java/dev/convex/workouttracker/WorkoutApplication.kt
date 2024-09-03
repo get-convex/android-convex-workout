@@ -14,9 +14,11 @@ class WorkoutApplication : Application() {
             convex = ConvexClientWithAuth(
                 getString(R.string.convex_url),
                 Auth0Provider(
+                    this,
                     getString(R.string.com_auth0_client_id),
                     getString(R.string.com_auth0_domain),
-                    getString(R.string.com_auth0_scheme)
+                    getString(R.string.com_auth0_scheme),
+                    enableCachedLogins = true
                 )
             )
         )

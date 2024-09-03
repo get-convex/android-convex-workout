@@ -22,4 +22,8 @@ class WorkoutRepository(private val convex: ConvexClientWithAuth<Credentials>) {
     suspend fun signIn(context: Context) {
         convex.login(context)
     }
+
+    suspend fun signInWithCachedCredentials() {
+        convex.loginFromCache()
+    }
 }
