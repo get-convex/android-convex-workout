@@ -55,3 +55,11 @@ On your Convex dashboard for the application, add environment variables for `AUT
 `AUTH0_CLIENT_ID`. See the
 [Auth0 integration docs](https://docs.convex.dev/auth/auth0#configuring-dev-and-prod-tenants) for
 more information.
+
+## Tools used
+
+* [Public domain icon](https://www.svgrepo.com/svg/109426/gym-near)
+* Android icon xml generated via [Icon Kitchen](https://icon.kitchen)
+* [Material theme generator](https://material-foundation.github.io/material-theme-builder/)
+* [Auth0](https://auth0.com/) for Android Login
+* [Convex](https://convex.dev) for app backend
