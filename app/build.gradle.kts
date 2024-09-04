@@ -37,8 +37,16 @@ android {
             )
             resValue("string", "convex_url", workoutProperties.getProperty("convex.prod_url"))
             resValue("string", "com_auth0_scheme", workoutProperties.getProperty("auth0.scheme"))
-            resValue("string", "com_auth0_client_id", workoutProperties.getProperty("auth0.prod_client_id"))
-            resValue("string", "com_auth0_domain", workoutProperties.getProperty("auth0.prod_domain"))
+            resValue(
+                "string",
+                "com_auth0_client_id",
+                workoutProperties.getProperty("auth0.prod_client_id")
+            )
+            resValue(
+                "string",
+                "com_auth0_domain",
+                workoutProperties.getProperty("auth0.prod_domain")
+            )
 
             manifestPlaceholders["auth0Domain"] = workoutProperties.getProperty("auth0.prod_domain")
             manifestPlaceholders["auth0Scheme"] = workoutProperties.getProperty("auth0.scheme")
@@ -47,8 +55,16 @@ android {
         debug {
             resValue("string", "convex_url", workoutProperties.getProperty("convex.dev_url"))
             resValue("string", "com_auth0_scheme", workoutProperties.getProperty("auth0.scheme"))
-            resValue("string", "com_auth0_client_id", workoutProperties.getProperty("auth0.dev_client_id"))
-            resValue("string", "com_auth0_domain", workoutProperties.getProperty("auth0.dev_domain"))
+            resValue(
+                "string",
+                "com_auth0_client_id",
+                workoutProperties.getProperty("auth0.dev_client_id")
+            )
+            resValue(
+                "string",
+                "com_auth0_domain",
+                workoutProperties.getProperty("auth0.dev_domain")
+            )
 
             manifestPlaceholders["auth0Domain"] = workoutProperties.getProperty("auth0.dev_domain")
             manifestPlaceholders["auth0Scheme"] = workoutProperties.getProperty("auth0.scheme")
