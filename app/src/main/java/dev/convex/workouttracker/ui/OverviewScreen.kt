@@ -64,10 +64,6 @@ fun OverviewContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = "Workout Tracker",
-            style = MaterialTheme.typography.headlineLarge
-        )
         Week(
             onWeekSelected = onWeekSelected,
             selectedWeek = uiState.selectedWeek,
