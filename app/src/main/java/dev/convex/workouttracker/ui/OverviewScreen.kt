@@ -244,8 +244,8 @@ fun WorkoutItem(workout: Workout) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        onClick = { /*TODO*/ }) {
+            .padding(8.dp)
+        ) {
         Column(modifier = Modifier.padding(16.dp)) {
             val localDate = LocalDate.parse(workout.date)
 
