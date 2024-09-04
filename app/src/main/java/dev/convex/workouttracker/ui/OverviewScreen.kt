@@ -71,17 +71,16 @@ fun OverviewContent(
             selectedWeek = uiState.selectedWeek,
             workoutData = uiState.allWorkouts
         )
-        WorkoutFeed(workouts = uiState.workoutsForWeek)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
         ) {
             Button(onClick = onClickAddWorkout) {
                 Text("Add Workout")
             }
         }
-
+        WorkoutFeed(workouts = uiState.workoutsForWeek)
     }
 }
 
