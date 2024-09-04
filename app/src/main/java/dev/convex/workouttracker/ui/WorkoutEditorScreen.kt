@@ -44,8 +44,15 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 @Composable
-fun WorkoutEditorScreen(viewModel: WorkoutEditorViewModel) {
-    WorkoutEditorContent(onSave = viewModel::storeWorkout)
+fun WorkoutEditorScreen(
+    viewModel: WorkoutEditorViewModel,
+    workoutSaved: () -> Unit = {}
+) {
+    WorkoutEditorContent(onSave = { workout ->
+        viewModel.storeWorkout(workout) {
+            workoutSaved()
+        }
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

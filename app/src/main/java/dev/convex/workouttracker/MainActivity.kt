@@ -99,7 +99,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = WorkoutEditor.route) {
                             val viewModel: WorkoutEditorViewModel by viewModels { WorkoutEditorViewModel.Factory }
-                            WorkoutEditorScreen(viewModel)
+                            WorkoutEditorScreen(viewModel) {
+                                navController.popBackStack()
+                            }
                         }
                         composable(route = Loading.route) {
                             LoadingScreen()

@@ -17,9 +17,11 @@ class WorkoutEditorViewModel(private val repository: WorkoutRepository) : ViewMo
      *
      * It can be later retrieved via the [OverviewViewModel].
      */
-    fun storeWorkout(workout: Workout) {
+    fun storeWorkout(workout: Workout, storeComplete: () -> Unit = {}) {
         viewModelScope.launch {
             repository.storeWorkout(workout)
+            // If we reached here then it was successfully saved on the backend
+            storeComplete()
         }
     }
 
