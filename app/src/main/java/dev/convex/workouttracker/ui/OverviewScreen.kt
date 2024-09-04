@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -98,32 +100,33 @@ fun OverviewContentPreview() {
                 allWorkouts = mapOf(
                     today.minus(DatePeriod(days = 5)) to listOf(
                         Workout(
-                            "junk data",
+                            "2024-09-03",
                             Workout.Activity.Running
                         )
                     ),
                     today to listOf(
                         Workout(
-                            "junk data",
+                            "2024-09-02",
                             Workout.Activity.Swimming
                         )
                     )
                 ),
                 workoutsForWeek = listOf(
                     Workout(
-                        "junk data",
-                        Workout.Activity.Swimming
+                        "2024-09-01",
+                        Workout.Activity.Swimming,
+                        30
                     ),
                     Workout(
-                        "junk data",
+                        "2024-09-03",
                         Workout.Activity.Running
                     ),
                     Workout(
-                        "junk data",
+                        "2024-09-03",
                         Workout.Activity.Lifting
                     ),
                     Workout(
-                        "junk data",
+                        "2024-09-03",
                         Workout.Activity.Walking
                     ),
                 )
@@ -232,7 +235,44 @@ fun Dot(
 fun WorkoutFeed(workouts: List<Workout> = listOf()) {
     LazyColumn {
         items(workouts) {
-            Text(text = it.activity.toString())
+            WorkoutItem(workout = it)
         }
     }
+}
+
+@Composable
+fun WorkoutItem(workout: Workout) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        onClick = { /*TODO*/ }) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            val localDate = LocalDate.parse(workout.date)
+
+            Text(
+                text = "${
+                    localDate.month.getDisplayName(
+                        TextStyle.SHORT,
+                        Locale.getDefault()
+                    )
+                } ${localDate.dayOfMonth}",
+                fontWeight = FontWeight.Light
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = workout.activity.toString()
+                )
+                workout.duration?.let {
+                    Text(text = "${workout.duration} mins")
+                }
+            }
+
+        }
+    }
+
+
 }
