@@ -92,8 +92,7 @@ fun OverviewContent(
             NavigationBarDefaults.windowInsets,
         ).exclude(
             TopAppBarDefaults.windowInsets,
-        ),
-        modifier = Modifier.fillMaxSize()
+        )
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
