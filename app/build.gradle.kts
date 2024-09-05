@@ -95,7 +95,7 @@ dependencies {
     implementation("dev.convex:android-convexmobile:0.3.0@aar") {
         isTransitive = true
     }
-    implementation("dev.convex:android-convex-auth0:0.2.0")
+    implementation("dev.convex:android-convex-auth0:0.2.1")
     implementation("com.auth0.android:auth0:2.9.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
