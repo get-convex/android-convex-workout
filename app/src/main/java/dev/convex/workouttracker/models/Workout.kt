@@ -11,8 +11,14 @@ data class Workout(val date: String, val activity: Activity, val duration: Int? 
     /**
      * Converts this [Workout] to a map for easily sending as `args` to the Convex backend.
      */
-    fun toArgs() : Map<String, Any> {
-        return mapOf("date" to date, "activity" to activity.toString())
+    fun toArgs(): Map<String, Any> {
+        val map = mutableMapOf<String, Any>()
+        map["date"] = date
+        map["activity"] = activity.toString()
+        duration?.let {
+            map["duration"] = duration.toUInt()
+        }
+        return map
     }
 
     @Serializable
