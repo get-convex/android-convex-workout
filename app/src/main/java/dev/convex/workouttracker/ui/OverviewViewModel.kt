@@ -71,6 +71,7 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
             }
             emit(
                 UiState(
+                    loading = false,
                     selectedWeek = selectedWeek,
                     allWorkouts = workouts,
                     workoutsForWeek = workoutsForWeek
@@ -100,6 +101,7 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
 }
 
 data class UiState(
+    val loading: Boolean = true,
     val selectedWeek: LocalDate = defaultStartDate,
     val allWorkouts: Map<LocalDate, List<Workout>> = mapOf(),
     val workoutsForWeek: List<Workout> = listOf()

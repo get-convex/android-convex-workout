@@ -100,12 +100,16 @@ fun OverviewContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Week(
-                onWeekSelected = onWeekSelected,
-                selectedWeek = uiState.selectedWeek,
-                workoutData = uiState.allWorkouts
-            )
-            WorkoutFeed(workouts = uiState.workoutsForWeek)
+            if (uiState.loading) {
+                LoadingScreen()
+            } else {
+                Week(
+                    onWeekSelected = onWeekSelected,
+                    selectedWeek = uiState.selectedWeek,
+                    workoutData = uiState.allWorkouts
+                )
+                WorkoutFeed(workouts = uiState.workoutsForWeek)
+            }
         }
     }
 
@@ -122,6 +126,7 @@ fun OverviewContentPreview() {
         OverviewContent(
             onWeekSelected = { selectedWeek = it },
             uiState = UiState(
+                loading = false,
                 selectedWeek = selectedWeek,
                 allWorkouts = mapOf(
                     today.minus(DatePeriod(days = 5)) to listOf(
