@@ -1,5 +1,6 @@
 package dev.convex.workouttracker.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -47,6 +48,7 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
         emitAll(repository.subscribeToWorkouts())
     }.transform { result ->
         result.onSuccess { value ->
+            Log.d("OverviewViewModel", "Received workouts: $value")
             emit(value)
         }
     }

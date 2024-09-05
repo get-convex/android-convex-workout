@@ -4,7 +4,7 @@ import { v } from "convex/values";
 export const store = mutation({
   args: {
     date: v.string(),
-    duration: v.optional(v.int64()),
+    duration: v.optional(v.number()),
     activity: v.union(
       v.literal("Running"),
       v.literal("Lifting"),

@@ -49,6 +49,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.roundToInt
 
 @Composable
 fun OverviewScreen(
@@ -146,7 +147,7 @@ fun OverviewContentPreview() {
                     Workout(
                         "2024-09-01",
                         Workout.Activity.Swimming,
-                        30
+                        30f
                     ),
                     Workout(
                         "2024-09-03",
@@ -298,7 +299,7 @@ fun WorkoutItem(workout: Workout) {
                     text = workout.activity.toString()
                 )
                 workout.duration?.let {
-                    Text(text = "${workout.duration} mins")
+                    Text(text = "${workout.duration.roundToInt()} mins")
                 }
             }
 
