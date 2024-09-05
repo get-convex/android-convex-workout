@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,12 +14,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,32 +63,53 @@ fun OverviewScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewContent(
     onClickAddWorkout: () -> Unit = {},
     onWeekSelected: (startDate: LocalDate) -> Unit = {},
     uiState: UiState = UiState(),
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Week(
-            onWeekSelected = onWeekSelected,
-            selectedWeek = uiState.selectedWeek,
-            workoutData = uiState.allWorkouts
-        )
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Button(onClick = onClickAddWorkout) {
-                Text("Add Workout")
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = onClickAddWorkout) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                    Text(text = "Add Workout")
+                }
+
             }
+        },
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.exclude(
+            NavigationBarDefaults.windowInsets,
+        ).exclude(
+            TopAppBarDefaults.windowInsets,
+        ),
+        modifier = Modifier.fillMaxSize()
+    ) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Week(
+                onWeekSelected = onWeekSelected,
+                selectedWeek = uiState.selectedWeek,
+                workoutData = uiState.allWorkouts
+            )
+            WorkoutFeed(workouts = uiState.workoutsForWeek)
         }
-        WorkoutFeed(workouts = uiState.workoutsForWeek)
     }
+
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 680)
@@ -245,7 +273,7 @@ fun WorkoutItem(workout: Workout) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-        ) {
+    ) {
         Column(modifier = Modifier.padding(16.dp)) {
             val localDate = LocalDate.parse(workout.date)
 
