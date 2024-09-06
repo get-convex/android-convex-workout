@@ -23,21 +23,7 @@ export const store = userMutation({
   },
 });
 
-export const get = userQuery({
-  args: {},
-  handler: async (ctx, _) => {
-    const workouts = await ctx.db
-      .query("workouts")
-      .withIndex("userId_date", (q) =>
-        q.eq("userId", ctx.identity.tokenIdentifier)
-      )
-      .order("desc")
-      .take(100);
-    return workouts;
-  },
-});
-
-export const getWorkoutsInRange = userQuery({
+export const getInRange = userQuery({
   args: {
     startDate: v.string(),
     endDate: v.string(),

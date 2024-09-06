@@ -16,15 +16,12 @@ class WorkoutRepository(private val convex: ConvexClientWithAuth<Credentials>) {
         )
     }
 
-    suspend fun subscribeToWorkouts(): Flow<Result<List<Workout>>> =
-        convex.subscribe<List<Workout>>("workouts:get")
-
     suspend fun subscribeToWorkoutsInRange(
         startDate: String,
         endDate: String
     ): Flow<Result<List<Workout>>> =
         convex.subscribe<List<Workout>>(
-            "workouts:getWorkoutsInRange",
+            "workouts:getInRange",
             mapOf("startDate" to startDate, "endDate" to endDate)
         )
 
