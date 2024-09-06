@@ -132,7 +132,7 @@ fun OverviewContentPreview() {
                     Workout(
                         "2024-09-01",
                         Workout.Activity.Swimming,
-                        30f
+                        30
                     ),
                     Workout(
                         "2024-09-03",
@@ -286,7 +286,7 @@ fun WorkoutItem(workout: Workout) {
                     text = workout.activity.toString()
                 )
                 workout.duration?.let {
-                    Text(text = "${workout.duration.roundToInt()} mins")
+                    Text(text = "${workout.duration} mins")
                 }
             }
 
