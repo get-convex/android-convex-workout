@@ -108,7 +108,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("dev.convex:android-convexmobile:0.4.0@aar") {
+    implementation("dev.convex:android-convexmobile:0.4.1@aar") {
         isTransitive = true
     }
     implementation("dev.convex:android-convex-auth0:0.2.1")
