@@ -52,14 +52,15 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
             emit(workouts)
         }
         result.onFailure {
-            Log.d("Flow", "Failed to get workouts")
+            Log.e("Flow", "Failed to get workouts")
             emit(listOf<Workout>())
         }
     }.transform { workouts ->
         emit(
             UiState(
                 loading = false,
-                selectedWeek = _selectedWeek.value, // TODO this is wrong I should be getting from the flow
+                // Unsure if referring to external var directly is a race condition.
+                selectedWeek = _selectedWeek.value,
                 workoutsForWeek = workouts
             )
         )
