@@ -4,7 +4,7 @@ import { userMutation, userQuery } from "./functions";
 export const store = userMutation({
   args: {
     date: v.string(),
-    duration: v.optional(v.number()),
+    duration: v.optional(v.int64()),
     activity: v.union(
       v.literal("Running"),
       v.literal("Lifting"),

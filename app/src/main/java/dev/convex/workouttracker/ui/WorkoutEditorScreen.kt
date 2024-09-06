@@ -94,7 +94,7 @@ fun WorkoutEditorContent(onSave: (workout: Workout) -> Unit = {}) {
                     Workout(
                         date = convertMillisToDate(datePickerState.selectedDateMillis!!),
                         activity = selectedActivity!!,
-                        duration = duration.text.toFloat()
+                        duration = duration.text.takeIf { it.isNotEmpty() }?.toInt()
                     )
                 )
             }) {
