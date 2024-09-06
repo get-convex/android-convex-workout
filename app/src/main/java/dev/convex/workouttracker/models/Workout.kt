@@ -17,16 +17,12 @@ data class Workout(
     /**
      * Converts this [Workout] to a map for easily sending as `args` to the Convex backend.
      */
-    fun toArgs(): Map<String, Any> {
-        mapOf("date" to date, "activity" to activity)
-        val map = mutableMapOf<String, Any>()
-        map["date"] = date
-        map["activity"] = activity.toString()
-        duration?.let {
-            map["duration"] = duration
+    fun toArgs(): Map<String, Any> =
+        mutableMapOf<String, Any>("date" to date, "activity" to activity.toString()).apply {
+            duration?.let {
+                put("duration", it)
+            }
         }
-        return map
-    }
 
     @Serializable
     enum class Activity {
