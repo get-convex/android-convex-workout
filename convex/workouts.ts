@@ -38,14 +38,6 @@ export const getInRange = userQuery({
           .lte("date", args.endDate)
       )
       .collect();
-    console.log(
-      "For range from:",
-      args.startDate,
-      "to end date",
-      args.endDate,
-      " got",
-      workouts
-    );
     return workouts;
   },
 });

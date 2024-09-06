@@ -1,6 +1,5 @@
 package dev.convex.workouttracker.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -35,7 +34,6 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
      * The new value should be +/- 7 days from the prior selected week.
      */
     fun selectWeek(startDate: LocalDate) {
-        Log.d("Selected Week change ", startDate.toString())
         assert(_selectedWeek.value.minus(startDate).days.absoluteValue == 7)
         _selectedWeek.value = startDate
     }
@@ -48,11 +46,9 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
         )
     }.transform { result ->
         result.onSuccess { workouts ->
-            Log.d("Flow", "Got workouts $workouts")
             emit(workouts)
         }
         result.onFailure {
-            Log.e("Flow", "Failed to get workouts")
             emit(listOf<Workout>())
         }
     }.transform { workouts ->
