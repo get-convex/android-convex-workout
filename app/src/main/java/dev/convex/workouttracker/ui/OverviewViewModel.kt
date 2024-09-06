@@ -10,17 +10,15 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.convex.workouttracker.WorkoutApplication
 import dev.convex.workouttracker.core.WorkoutRepository
 import dev.convex.workouttracker.models.Workout
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
@@ -37,50 +35,35 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
      * The new value should be +/- 7 days from the prior selected week.
      */
     fun selectWeek(startDate: LocalDate) {
+        Log.d("Selected Week change ", startDate.toString())
         assert(_selectedWeek.value.minus(startDate).days.absoluteValue == 7)
         _selectedWeek.value = startDate
     }
 
-    /**
-     * A state flow containing a map of dates to workouts for that date (if any).
-     */
-    val uiState = flow {
-        emitAll(repository.subscribeToWorkouts())
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val uiState = _selectedWeek.flatMapLatest { selectedWeek ->
+        repository.subscribeToWorkoutsInRange(
+            selectedWeek.toString(),
+            selectedWeek.plus(DatePeriod(days = 6)).toString()
+        )
     }.transform { result ->
-        result.onSuccess { value ->
-            Log.d("OverviewViewModel", "Received workouts: $value")
-            emit(value)
+        result.onSuccess { workouts ->
+            Log.d("Flow", "Got workouts $workouts")
+            emit(workouts)
         }
-    }
-        .transform<List<Workout>, Map<LocalDate, List<Workout>>> { workouts ->
-            val workoutMap = mutableMapOf<LocalDate, MutableList<Workout>>()
-            workouts.forEach {
-                workoutMap.getOrPut(LocalDate.parse(it.date)) { mutableListOf() }.add(it)
-            }
-            emit(workoutMap)
-        }.combineTransform(_selectedWeek) { workouts, selectedWeek ->
-            // TODO finish creating a UiState instance to emit and update the app to handle.
-            val workoutsForWeek = mutableListOf<Workout>()
-            for (offset in 0..6) {
-                workoutsForWeek.addAll(
-                    workouts.getOrDefault(
-                        selectedWeek.plus(
-                            offset,
-                            DateTimeUnit.DAY
-                        ), listOf()
-                    )
-                )
-            }
-            emit(
-                UiState(
-                    loading = false,
-                    selectedWeek = selectedWeek,
-                    allWorkouts = workouts,
-                    workoutsForWeek = workoutsForWeek
-                )
+        result.onFailure {
+            Log.d("Flow", "Failed to get workouts")
+            emit(listOf<Workout>())
+        }
+    }.transform { workouts ->
+        emit(
+            UiState(
+                loading = false,
+                selectedWeek = _selectedWeek.value, // TODO this is wrong I should be getting from the flow
+                workoutsForWeek = workouts
             )
-        }
-        .viewModelScopedStateIn(initialValue = UiState())
+        )
+    }.viewModelScopedStateIn(initialValue = UiState())
 
     /**
      * Converts this [Flow] to a `StateFlow` scoped to the lifetime of the associated [ViewModel].
@@ -105,7 +88,6 @@ class OverviewViewModel(private val repository: WorkoutRepository) : ViewModel()
 data class UiState(
     val loading: Boolean = true,
     val selectedWeek: LocalDate = defaultStartDate,
-    val allWorkouts: Map<LocalDate, List<Workout>> = mapOf(),
     val workoutsForWeek: List<Workout> = listOf()
 ) {
     companion object {

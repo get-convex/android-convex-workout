@@ -107,7 +107,7 @@ fun OverviewContent(
                 Week(
                     onWeekSelected = onWeekSelected,
                     selectedWeek = uiState.selectedWeek,
-                    workoutData = uiState.allWorkouts
+                    workoutData = uiState.workoutsForWeek
                 )
                 WorkoutFeed(workouts = uiState.workoutsForWeek)
             }
@@ -120,7 +120,6 @@ fun OverviewContent(
 @Composable
 fun OverviewContentPreview() {
     WorkoutTrackerTheme {
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         var selectedWeek by remember {
             mutableStateOf(UiState.defaultStartDate)
         }
@@ -129,20 +128,6 @@ fun OverviewContentPreview() {
             uiState = UiState(
                 loading = false,
                 selectedWeek = selectedWeek,
-                allWorkouts = mapOf(
-                    today.minus(DatePeriod(days = 5)) to listOf(
-                        Workout(
-                            "2024-09-03",
-                            Workout.Activity.Running
-                        )
-                    ),
-                    today to listOf(
-                        Workout(
-                            "2024-09-02",
-                            Workout.Activity.Swimming
-                        )
-                    )
-                ),
                 workoutsForWeek = listOf(
                     Workout(
                         "2024-09-01",
@@ -173,7 +158,7 @@ private val DAY_SIZE = 24.dp
 fun Week(
     onWeekSelected: (startOfWeek: LocalDate) -> Unit = {},
     selectedWeek: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-    workoutData: Map<LocalDate, List<Workout>> = mapOf()
+    workoutData: List<Workout>
 ) {
     Column {
         Row(
@@ -227,7 +212,9 @@ fun Week(
                 .padding(horizontal = 8.dp)
         ) {
             for (offset in 0..6) {
-                Dot(filled = workoutData.containsKey(selectedWeek.plus(DatePeriod(days = offset))))
+                Dot(filled = workoutData.find { workout ->
+                    workout.date == (selectedWeek.plus(DatePeriod(days = offset)).toString())
+                } != null)
             }
         }
     }

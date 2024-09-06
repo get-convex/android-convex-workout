@@ -1,7 +1,7 @@
-import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { userMutation, userQuery } from "./functions";
 
-export const store = mutation({
+export const store = userMutation({
   args: {
     date: v.string(),
     duration: v.optional(v.number()),
@@ -13,12 +13,8 @@ export const store = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (identity === null) {
-      throw new Error("Unauthenticated call to create");
-    }
     const newWorkoutId = await ctx.db.insert("workouts", {
-      user: identity.email,
+      userId: ctx.identity.tokenIdentifier,
       date: args.date,
       duration: args.duration,
       activity: args.activity,
@@ -27,18 +23,43 @@ export const store = mutation({
   },
 });
 
-export const get = query({
-    args: {},
-    handler: async (ctx, _) => {
-        const identity = await ctx.auth.getUserIdentity();
-    if (identity === null) {
-      throw new Error("Unauthenticated call to create");
-    }
-      const workouts = await ctx.db
-        .query("workouts")
-        .filter((q) => q.eq(q.field("user"), identity.email))
-        .order("desc")
-        .take(100);
-      return workouts;
-    },
-  });
+export const get = userQuery({
+  args: {},
+  handler: async (ctx, _) => {
+    const workouts = await ctx.db
+      .query("workouts")
+      .withIndex("userId_date", (q) =>
+        q.eq("userId", ctx.identity.tokenIdentifier)
+      )
+      .order("desc")
+      .take(100);
+    return workouts;
+  },
+});
+
+export const getWorkoutsInRange = userQuery({
+  args: {
+    startDate: v.string(),
+    endDate: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const workouts = await ctx.db
+      .query("workouts")
+      .withIndex("userId_date", (q) =>
+        q
+          .eq("userId", ctx.identity.tokenIdentifier)
+          .gte("date", args.startDate)
+          .lte("date", args.endDate)
+      )
+      .collect();
+    console.log(
+      "For range from:",
+      args.startDate,
+      "to end date",
+      args.endDate,
+      " got",
+      workouts
+    );
+    return workouts;
+  },
+});
