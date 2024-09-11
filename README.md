@@ -2,6 +2,10 @@
 
 Sample Android Convex app using Jetpack Compose
 
+[4 minute YouTube walkthrough](https://www.youtube.com/watch?v=XSNLDdF6odo)
+
+[See the app](https://github.com/user-attachments/assets/51bd65ac-46a1-4f37-9017-a37e25cc681b)
+
 New to Convex? [Take the tour](https://docs.convex.dev/get-started).
 
 ## Getting Started
@@ -19,7 +23,7 @@ app://{yourAuth0Domain}/android/dev.convex.workouttracker/callback
 4. Make sure your Auth0 Application Type setting is set to "Native".
 5. Run `npx convex dev` and setup a new Convex application (or connect to an existing one for
    Workout Tracker) for the required backend functionality.
-6. [Setup the environment variables](https://docs.convex.dev/dashboard/deployments/deployment-settings#environment-variables)
+6. [Setup the environment variables](https://docs.convex.dev/auth/auth0#configuring-dev-and-prod-tenants)
    on the Convex backend: `AUTH0_CLIENT_ID` and `AUTH0_DOMAIN`
 7. Follow the local app configuration instructions below.
 
@@ -50,11 +54,6 @@ auth0.dev_client_id = DEV_CLIENT_ID
 auth0.prod_domain = your-prod-domain.us.auth0.com
 auth0.prod_client_id = PROD_CLIENT_ID
 ```
-
-On your Convex dashboard for the application, add environment variables for `AUTH0_DOMAIN` and
-`AUTH0_CLIENT_ID`. See the
-[Auth0 integration docs](https://docs.convex.dev/auth/auth0#configuring-dev-and-prod-tenants) for
-more information.
 
 ## Tools used
 
