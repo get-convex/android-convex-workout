@@ -2,7 +2,7 @@
 
 Sample Android Convex app using Jetpack Compose
 
-[4 minute YouTube walkthrough](https://www.youtube.com/watch?v=XSNLDdF6odo)
+[4 minute YouTube walkthrough](https://youtu.be/dcGASWDgPm4?si=gTkFdFcHEyyhD2-w)
 
 [See the app](https://github.com/user-attachments/assets/51bd65ac-46a1-4f37-9017-a37e25cc681b)
 
