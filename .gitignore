@@ -35,3 +35,7 @@ google-services.json
 .env.local
 node_modules/
 /workout.properties
+
+/.DS_Store
+**/.DS_Store
+
