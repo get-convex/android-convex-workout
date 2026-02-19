@@ -3,6 +3,7 @@ package dev.convex.workouttracker
 import android.app.Application
 import dev.convex.android.ConvexClientWithAuth
 import dev.convex.android.auth0.Auth0Provider
+import dev.convex.android.initConvexLogging
 import dev.convex.workouttracker.core.WorkoutRepository
 
 class WorkoutApplication : Application() {
@@ -10,6 +11,7 @@ class WorkoutApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        initConvexLogging()
         repository = WorkoutRepository(
             convex = ConvexClientWithAuth(
                 getString(R.string.convex_url),
@@ -18,7 +20,6 @@ class WorkoutApplication : Application() {
                     getString(R.string.com_auth0_client_id),
                     getString(R.string.com_auth0_domain),
                     getString(R.string.com_auth0_scheme),
-                    enableCachedLogins = true
                 )
             )
         )
